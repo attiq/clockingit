@@ -28,6 +28,30 @@ class Project < ActiveRecord::Base
       f.name = r.full_name
       f.save
     end
+    if r.create_wiki
+      w = WikiPage.new
+      w.company_id = r.company_id
+      w.name = "#{r.name}'s wiki " 
+      w.project_id = r.id
+      w.lock(Time.now.utc, r.owner.id )
+      w.save
+       
+      rev = WikiRevision.new
+      rev.wiki_page = w
+      rev.user = r.owner
+      rev.body = "This is wiki for #{r.name} project "
+      # rev.change = params[:change]
+      rev.save
+      
+      l = w.event_logs.new
+      l.company_id = w.company_id
+      l.project_id = w.project_id
+      l.user_id = r.owner.id
+      l.event_type = w.revisions.size < 2 ? EventLog::WIKI_CREATED : EventLog::WIKI_MODIFIED
+      l.created_at = rev.created_at
+      # l.body = params[:change]
+      l.save 
+    end
   }
 
   def full_name
