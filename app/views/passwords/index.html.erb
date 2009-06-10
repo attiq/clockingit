@@ -1,0 +1,49 @@
+<table class="content project-list" width="100%" style="padding-left: 1em; padding-right: 1em;" cellpadding="0" cellspacing="0">
+  <tr>
+    <td class="page_header">
+      <div style="float:left;"><%=_ 'Passwords' %></div>
+      <div style="float:right;padding-top:0.1em;"><%= link_to _('New Password'), :action => 'new' %></div>
+    </td>
+  </tr>
+  <tr>
+    <td>
+      <fieldset>
+        <table width="100%">
+          <tr>
+            <th> Project </th>
+            <th> User Name</th>
+            <th> Password </th>
+            <th> Password Type </th>
+            <th> URL </th>
+            <th> Notes </th>
+            <th> &nbsp;</th>
+          </tr> 
+          <% for password in @passwords  %>
+            <tr>
+              <td><%= password.project.name %></td>
+              <td><%= password.username %></td>
+              <td><% (1 .. password.password.size).each do %>
+             <span>*</span>
+             <%#= link_to "*" %>
+           <%end%> </td>
+           <td><%= password.password_type %></td>
+           <td><%= password.url %></td>
+           <td><%= password.note %></td>
+           <td>
+             <%= link_to image_tag("application_edit.png", :border => 0, :title => _("Edit <b>%s</b> Password", password.password_type), :class => "tooltip"), :controller => 'passwords', :action => 'edit', :id => password.id %> 
+             <%= link_to image_tag("application_form_edit.png", :border => 0, :title => _("View <b>%s</b> Password", password.password_type ), :class => "tooltip"), :controller => 'passwords', :action => 'show', :id => password.id %> 
+             <%= link_to image_tag("log.png", :border => 0, :title => _("View <b>%s</b> Log ", password.password_type ), :class => "tooltip"), :controller => 'passwords', :action => 'password_log', :id => password.id %> 
+           </td>
+            </tr>
+          <%end%>
+        </table>
+      </fieldset>
+    </td>
+  </tr>  
+  <tr>
+    <td>
+      <%= pagination_links(@passwords) %>
+    </td>
+  </tr>
+</table>
+<br />

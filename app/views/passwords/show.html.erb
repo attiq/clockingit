@@ -1,0 +1,23 @@
+<fieldset>
+  <legend> <%= @password.password_type %> Password </legend>
+    
+    <div class="information-header"><%= _('Project Name') %></div>
+    <div class="information-value"><%= @password.project.name %></div>
+  
+    <div class="information-header"><%= _('Creator') %></div>
+    <div class="information-value"><%= User.find_by_id(@password.password_creator_id).name %></div> 
+  
+    <div class="information-header"><%= _('Password Type') %></div>
+    <div class="information-value"><%= @password.password_type %></div> 
+    
+    <div class="information-header"><%= _('URL') %></div>
+    <div class="information-value"><%= @password.url%></div> 
+    
+    <div class="information-header"><%= _('User Name') %></div>
+    <div class="information-value"><%= @password.username %></div> 
+    
+    <div class="information-header"><%= _('Password') %></div>
+    <div class="information-value"><%= @password.password %></div> 
+
+</fieldset>
+

@@ -1,0 +1,40 @@
+<fieldset>
+  <legend><%= _'New Password'%></legend>
+   <% form_for(@password) do |f| %>
+     
+       <%= error_messages_for 'password' %>
+<table>
+  <tr>
+    <td><label for="project_id"><%=_ 'Project Name' %></label></td>
+    <td><%= select_tag 'password[project_id]', options_from_collection_for_select(current_user.projects , :id, :name  )   %></td>
+  </tr>
+  <tr>
+    <td><label for="password_creator_id"><%=_ 'Password Creator' %></label></td>
+    <td><%=  f.select 'password_creator_id', User.find(:all, :order => 'name').collect {|c| [ c.name, c.id ] }  %></td>
+  </tr>
+  <tr>
+    <td><label for="type"><%=_ 'Password Type' %></label></td>
+    <td><%=  f.text_field :password_type  %></td>
+  </tr>
+  <tr>
+    <td><label for="url"><%=_ 'URL' %></label></td>
+    <td><%=  f.text_field :url  %></td>
+  </tr>
+  <tr>
+    <td><label for="username"><%=_ 'User Name' %></label></td>
+    <td><%=  text_field_tag 'password[username]',nil, :size=>30 %></td>
+  </tr>
+  <tr>
+    <td><label for="password"><%=_ 'Password' %></label></td>
+    <td><%=  text_field_tag 'password[password]',nil, :size=>30  %></td>
+  </tr>
+  <tr>
+    <td><label for="password"><%=_ 'Note' %></label></td>
+    <td><%= f.text_area :note ,:cols=> 23, :rows=>5 %></td>
+  </tr>
+</table>
+    <%= f.submit "Create" %>  
+   <div style="float:left; padding-left:10px;padding-top:10px;"> | <%= link_to "Cancel", passwords_path %></div>
+  
+  <%end%> 
+</fieldset>
