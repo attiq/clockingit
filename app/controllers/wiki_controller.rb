@@ -1,6 +1,36 @@
 class WikiController < ApplicationController
 
+  def list
+    @projects = current_user.projects.paginate(:all, 
+      :order => 'customer_id',
+      :page => params[:page],
+      :per_page => 100,
+      :include => [ :customer, :milestones]);
+  end 
+   
+  def wikis_list
+    # Subscribe to the juggernaut channel for Task updates
+    session[:channels] += ["tasks_#{current_user.company_id}"]
+
+    project_ids = TaskFilter.filter_ids(session, :filter_project)
+
+    if project_ids.include?(0) or project_ids.empty?
+      project_ids = current_project_ids
+    else
+      project_ids = session[:filter_project]
+    end
+    @wikis = []
+    project_ids.each{ |id|
+      @project = Project.find_by_id(id)
+      @project.wiki_pages.each{ |w|
+        @wikis.push(WikiPage.find_by_id(w.id)) 
+     }
+    } 
+    
+  end 
+  
   def show
+   
     name = params[:id] || 'Frontpage'
 
     @page = WikiPage.find(:first, :conditions => ["company_id = ? AND name = ?", current_user.company_id, name])
