@@ -54,6 +54,14 @@ class Project < ActiveRecord::Base
     end
   }
 
+  def project_manager
+    User.find_by_id(self.project_manager_id).name   
+  end  
+      
+  def chief_worker
+    User.find_by_id(self.chief_worker_id).name   
+  end  
+  
   def full_name
     "#{customer.name} / #{name}"
   end
@@ -76,32 +84,32 @@ class Project < ActiveRecord::Base
 
   def total_tasks_count
     if self.total_tasks.nil?
-       self.total_tasks = tasks.count
-       self.save
+      self.total_tasks = tasks.count
+      self.save
     end
     total_tasks
   end
 
   def open_tasks_count
     if self.open_tasks.nil?
-       self.open_tasks = tasks.count(:conditions => ["completed_at IS NULL"])
-       self.save
+      self.open_tasks = tasks.count(:conditions => ["completed_at IS NULL"])
+      self.save
     end
     open_tasks
   end
 
   def total_milestones_count
     if self.total_milestones.nil?
-       self.total_milestones = milestones.count
-       self.save
+      self.total_milestones = milestones.count
+      self.save
     end
     total_milestones
   end
 
   def open_milestones_count
     if self.open_milestones.nil?
-       self.open_milestones = milestones.count(:conditions => ["completed_at IS NULL"])
-       self.save
+      self.open_milestones = milestones.count(:conditions => ["completed_at IS NULL"])
+      self.save
     end
     open_milestones
   end
@@ -118,5 +126,31 @@ class Project < ActiveRecord::Base
     self.total_tasks = nil
   end
   
+  def create_tasks(pro,user)
+    pro.tasks.each do |task|   
+      # tags = task.tags
+      new_task = user.company.tasks.new
+      new_task.name = task.name
+      new_task.company_id = user.company_id
+      new_task.project_id = self.id
+      new_task.updated_by_id = user.id
+      new_task.creator_id = user.id
+      new_task.requested_by = task.requested_by
+      new_task.milestone_id = task.milestone_id
+      # new_task.due_at  = (task.due_at - pro.created_at )+Date.today
+      new_task.duration = task.duration 
+      # new_task.set_tags(tags) 
+      new_task.set_task_num(user.company_id)
+      new_task.duration = 0 if new_task.duration.nil?
+      if new_task.save
+        # session[:last_project_id] = @task.project_id
+        # new_task.set_watcher_attributes(params[:watchers],user)
+        # @task.set_owner_attributes(params[:users])
+        # @task.set_dependency_attributes(params[:dependencies], current_project_ids)
+        # @task.set_resource_attributes(params[:resource])
+        #  create_attachments(new_task)
+      end 
+    end
+  end
 
 end

@@ -1,0 +1,8 @@
+      if @select_project == "New Project"
+        page[:duplicate_project].hide
+        page[:new_project].show
+      else  
+        page[:new_project].hide
+        page[:duplicate_project].show
+      end
+

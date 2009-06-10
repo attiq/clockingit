@@ -68,6 +68,73 @@ class ProjectsController < ApplicationController
     end
   end
 
+  def show_project
+    @select_project = params[:select_project]
+    render :template => "/projects/show_project.rjs"
+  end
+  
+  
+  def duplicate_project
+    unless current_user.create_projects?
+      flash['notice'] = _"You're not allowed to create new projects. Have your admin give you access."
+      redirect_from_last
+      return
+    end
+    @pro = Project.find_by_id(params[:project_id])
+    @project = Project.new
+    @project.name = "Duplicate of #{@pro.name}"
+    @project.user_id = @pro.user_id
+    @project.company_id = @pro.company_id
+    @project.customer_id = @pro.customer_id
+    @project.description = @pro.description
+    @project.project_manager_id = @pro.project_manager_id
+    @project.chief_worker_id = @pro.chief_worker_id
+    
+    if @project.save
+      if params[:copy_project].to_i > 0
+        project = current_user.all_projects.find(params[:copy_project])
+        project.project_permissions.each do |perm|
+          p = perm.clone
+          p.project_id = @project.id
+          p.save
+
+          if p.user_id == current_user.id
+            @project_permission = p
+          end
+        
+        end
+      end 
+        
+      @project_permission ||= ProjectPermission.new
+
+      @project_permission.user_id = current_user.id
+      @project_permission.project_id = @project.id
+      @project_permission.company_id = current_user.company_id
+      @project_permission.can_comment = 1
+      @project_permission.can_work = 1
+      @project_permission.can_close = 1
+      @project_permission.can_report = 1
+      @project_permission.can_create = 1
+      @project_permission.can_edit = 1
+      @project_permission.can_reassign = 1
+      @project_permission.can_prioritize = 1
+      @project_permission.can_milestone = 1
+      @project_permission.can_grant = 1
+      @project_permission.save
+      @project.create_tasks(@pro,current_user)
+      if @project.company.users.size == 1
+        flash['notice'] = _('Project was successfully created.')
+        redirect_from_last
+      else
+        flash['notice'] = _('Project was successfully created. Add users who need access to this project.')
+        redirect_to :action => 'edit', :id => @project
+      end
+    else
+      render :action => 'new'
+    end
+  end
+  
+  
   def create_shortlist_ajax
     if params[:project].nil? || params[:project][:name].nil? || params[:project][:name].empty?
       render :nothing => true
@@ -273,10 +340,10 @@ class ProjectsController < ApplicationController
 
   def list
     @projects = current_user.projects.paginate(:all, 
-                                               :order => 'customer_id',
-                                               :page => params[:page],
-                                               :per_page => 100,
-                                               :include => [ :customer, :milestones]);
+      :order => 'customer_id',
+      :page => params[:page],
+      :per_page => 100,
+      :include => [ :customer, :milestones]);
     @completed_projects = current_user.completed_projects.find(:all)
   end
 end
