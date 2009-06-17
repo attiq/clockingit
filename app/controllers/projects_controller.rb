@@ -339,10 +339,8 @@ class ProjectsController < ApplicationController
   end
 
   def list
-    @projects = current_user.projects.paginate(:all, 
+    @projects = current_user.projects.find(:all, 
       :order => 'customer_id',
-      :page => params[:page],
-      :per_page => 100,
       :include => [ :customer, :milestones]);
     @completed_projects = current_user.completed_projects.find(:all)
   end
