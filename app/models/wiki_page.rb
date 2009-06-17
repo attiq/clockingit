@@ -5,6 +5,7 @@ class WikiPage < ActiveRecord::Base
   has_many :references, :class_name => 'WikiReference', :order => 'referenced_name'
   has_one  :current_revision, :class_name => 'WikiRevision', :order => 'id DESC'
   belongs_to :company
+  belongs_to :project
 
   has_many   :event_logs, :as => :target, :dependent => :destroy, :order => 'id DESC'
 

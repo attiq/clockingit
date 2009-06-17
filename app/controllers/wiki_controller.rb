@@ -1,8 +1,10 @@
 class WikiController < ApplicationController
 
   def list
-    @projects = current_user.projects.find(:all, 
+   @projects = current_user.projects.paginate(:all, 
       :order => 'customer_id',
+      :page => params[:page],
+      :per_page => 100,
       :include => [ :customer, :milestones]);
   end 
    
