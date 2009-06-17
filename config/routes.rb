@@ -39,6 +39,7 @@ ActionController::Routing::Routes.draw do |map|
   map.monitored_posts           'users/:user_id/monitored', :controller => 'posts', :action => 'monitored'
 
   map.resources :properties
+  map.resources :passwords
 
   map.connect ':controller/service.wsdl', :action => 'wsdl'
 
