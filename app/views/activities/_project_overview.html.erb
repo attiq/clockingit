@@ -59,7 +59,7 @@
               <% if current_user.can?(project, 'grant') || current_user.can?(project, 'milestone') %>
                 <%= link_to image_tag("application_form_edit.png", :border => 0, :title => _("Edit project <b>%s</b>", project.name), :class => "tooltip"),
                   { :controller => 'projects', :action => 'edit', :id => project } -%>
-                <% unless project.wiki_pages.nil? %>        
+                <% unless project.wiki_pages.empty? %>        
                   <%= link_to image_tag("page.png", :border => 0, :title => _("View <b>%s</b> wiki",project.wiki_pages.first.name ),:class => "tooltip"),
                     :controller => 'wiki', :action => 'show', :id => project.wiki_pages.first.name  %> 
                 <%end%>
