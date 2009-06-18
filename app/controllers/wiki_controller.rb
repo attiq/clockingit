@@ -22,7 +22,7 @@ class WikiController < ApplicationController
     @wikis = []
     project_ids.each{ |id|
       @project = Project.find_by_id(id)
-      unless @project.wiki_pages.empty?
+      unless @project.wiki_pages.nil?
       @project.wiki_pages.each{ |w|
         @wikis.push(WikiPage.find_by_id(w.id)) 
       }
